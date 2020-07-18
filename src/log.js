@@ -92,41 +92,7 @@ let log = {}; {
     let convertMsg = (arg) => {
         let msg = '';
         for (let i = 0; i < arg.length; i++) {
-            let t = typeof arg[i];
-            switch (t) {
-                case 'number':
-                case 'boolean':
-                case 'string':
-                    t = arg[i];
-                    break;
-                case 'object':
-                    if (isArray(arg[i])) {
-                        t = '[';
-                        let count = 0;
-                        for (let p in arg[i]) {
-                            t += dumpObject(arg[i][p]);
-                            count++;
-                            if (count < arg[i].length) {
-                                t += ',';
-                            }
-                        }
-                        t += ']';
-                    } else {
-                        t = '{';
-                        let count = 0;
-                        let objLen = Object.keys(arg[i]).length;
-                        for (let p in arg[i]) {
-                            t += p + ':' + dumpObject(arg[i][p]);
-                            count++;
-                            if (count < objLen) {
-                                t += ',';
-                            }
-                        }
-                        t += '}';
-                    }
-                    break;
-            }
-            msg += ' ' + t;
+            msg += ' ' + dumpObject(arg[i]);
         }
         return msg;
     }
@@ -136,43 +102,47 @@ let log = {}; {
      * @param {Object} obj 
      */
     let dumpObject = (obj) => {
+        let v = null;
         let t = typeof obj;
         switch (t) {
             case 'number':
             case 'boolean':
-                t = obj;
+                v = obj;
                 break;
             case 'string':
-                t = '"' + obj + '"';
+                v = '"' + obj + '"';
                 break;
             case 'object':
                 if (isArray(obj)) {
-                    t = '[';
+                    v = '[';
                     let count = 0;
-                    for (let p in obj) {
-                        t += dumpObject(obj[p]);
+                    for (let value of obj) {
+                        v += dumpObject(value);
                         count++;
                         if (count < obj.length) {
-                            t += ',';
+                            v += ',';
                         }
                     }
-                    t += ']';
+                    v += ']';
                 } else {
-                    t = '{';
+                    v = '{';
                     let count = 0;
-                    let objLen = Object.keys(obj).length;
-                    for (let p in obj) {
-                        t += p + ':' + dumpObject(obj[p]);
-                        count++;
-                        if (count < objLen) {
-                            t += ',';
+                    let nameList = Object.getOwnPropertyNames(obj);
+                    for (let key of nameList) {
+                        let ret = dumpObject(obj[key]);
+                        if (ret) {
+                            v += key + ':' + ret;
+                            count++;
+                            if (count < nameList.length) {
+                                v += ',';
+                            }
                         }
                     }
-                    t += '}';
+                    v += '}';
                 }
                 break;
         }
-        return t;
+        return v;
     }
 
     /**
