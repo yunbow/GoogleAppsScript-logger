@@ -143,7 +143,22 @@ let log = {}; {
                     v = '"' + obj.toString() + '"';
                 } else if (isNumber(obj) || isBoolean(obj)) {
                     v = obj.valueOf();
+                } else if (isFunction(obj)) {
+                    v = '<fuction>';
+                } else if (isNull(obj)) {
+                    v = '<null>';
+                } else if (isUndefined(obj)) {
+                    v = '<undefined>';
                 }
+                break;
+            case 'function':
+                v = '<function>';
+                break;
+            case 'symbol':
+                v = '<symbol>';
+                break;
+            case 'undefined':
+                v = '<undefined>';
                 break;
         }
         return v;
@@ -175,6 +190,18 @@ let log = {}; {
 
     let isString = (obj) => {
         return Object.prototype.toString.call(obj) === '[object String]';
+    }
+
+    let isFunction = (obj) => {
+        return Object.prototype.toString.call(obj) === '[object Function]';
+    }
+
+    let isNull = (obj) => {
+        return Object.prototype.toString.call(obj) === '[object Null]';
+    }
+
+    let isUndefined = (obj) => {
+        return Object.prototype.toString.call(obj) === '[object Undefined]';
     }
 }
 log.init();
